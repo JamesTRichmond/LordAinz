@@ -1,0 +1,48 @@
+name: Static Site CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify required files exist
+        run: |
+          test -f index.html
+          test -f README.md
+          echo "Required files found."
+
+      - name: Basic HTML sanity check
+        run: |
+          grep -q "<!doctype html\\|<!DOCTYPE html" index.html
+          grep -q "<title>" index.html
+          echo "Basic HTML checks passed."
+
+      - name: Upload site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-files
+          path: |
+            index.html
+            styles.css
+            *.js
+            *.png
+            *.svg
+            *.xml
+            *.txt
+            CNAME
+            404.html
+            site.webmanifest
+          if-no-files-found: warn
