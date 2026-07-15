@@ -1,3 +1,7 @@
+# LordAinz
+
+![Static Site CI](https://github.com/JamesTRichmond/LordAinz/actions/workflows/ci.yml/badge.svg)
+
 # LordAi.nz
 
 A slick, self-contained static landing page for **Lord Ainz** — the Sorcerer-King
