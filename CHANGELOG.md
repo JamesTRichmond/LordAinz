@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+### CI: JS Syntax Check (2026-07-15)
+
+#### ✅ Completed
+- Added **JS syntax validation** step to `Static Site CI` workflow.
+  - Runs `node --check` on `throne.js` and `reliquary.js` after HTML validation.
+  - Catches parse errors and reserved-word violations before deployment.
+
+### Docs: README refresh (2026-07-15)
+
+#### ✅ Completed
+- Updated `README.md` to reflect current project state:
+  - Status: **LIVE** at [lordai.nz](https://lordai.nz) (was "STAGED, NOT DEPLOYED").
+  - Corrected CSS variables reference — properties live in `styles.css`, not inline.
+  - Expanded the Files section to document every file in the repo.
+  - Removed now-obsolete deploy/DNS setup instructions.
+
 ### CI & Quality Hardening (2026-07-15)
 
 #### ✅ Completed
