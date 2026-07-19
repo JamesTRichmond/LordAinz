@@ -93,7 +93,8 @@ def main():
         if attrs.get("aria-live") == "polite"
     ]
     assert len(live_regions) >= EXPECTED_LIVE_REGIONS, (
-        "interactive status regions are missing"
+        f"expected at least {EXPECTED_LIVE_REGIONS} live regions, "
+        f"found {len(live_regions)}"
     )
 
     pick_values = {
@@ -111,7 +112,8 @@ def main():
         if tag == "script"
     }
     for script in ("throne.js", "reliquary.js"):
-        assert script in scripts, f"{script} is not referenced"
+        if script not in scripts:
+            raise AssertionError(f"{script} is not referenced")
         assert "defer" in scripts[script], f"{script} is not deferred"
 
     reliquary = (ROOT / "reliquary.js").read_text(encoding="utf-8")
