@@ -66,7 +66,9 @@ jobs:
               for ref in refs:
                   if ref.startswith(("http://", "https://", "data:", "mailto:", "#")):
                       continue
-                  target = root / ref.split("?")[0].split("#")[0]
+                  # Root-absolute paths resolve against repo root (GitHub Pages behavior)
+                  clean = ref.split("?")[0].split("#")[0]
+                  target = root / clean.lstrip("/")
                   if not target.exists():
                       missing.append(f"{html_file} -> {ref}")
 
