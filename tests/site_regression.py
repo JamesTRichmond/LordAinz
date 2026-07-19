@@ -88,7 +88,8 @@ def main():
         )
 
     live_regions = [
-        attrs for tag, attrs in parser.elements
+        attrs
+        for tag, attrs in parser.elements
         if attrs.get("aria-live") == "polite"
     ]
     assert len(live_regions) >= EXPECTED_LIVE_REGIONS, (
