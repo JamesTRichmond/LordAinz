@@ -203,8 +203,8 @@
     function captionFor(s, heat, v) {
       var c = heatC(heat * 100);
       var baselineC = heatC(DEFAULT_HEAT_VALUE);
-      var envBit =
-        " At " + c + " °C the volatiles rise " + (c >= baselineC ? "faster" : "slower") + ";";
+      var rate = c > baselineC ? "faster" : c < baselineC ? "slower" : "at their baseline rate";
+      var envBit = " At " + c + " °C the volatiles rise " + rate + ";";
       var frozen =
         ' The state-blind model has not moved: <b>same molecule, same +0.55</b>' +
         " — it can name the smell, but cannot taste what it is <em>for</em>.";
