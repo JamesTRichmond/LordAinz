@@ -1,12 +1,13 @@
 """Dependency-free regression checks for the interactive site surface."""
 
 from html.parser import HTMLParser
+from collections import Counter
 from pathlib import Path
 import re
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_LIVE_REGIONS = 2  # one status region for each interactive demo
+EXPECTED_LIVE_REGIONS = 2  # one for demo-valence and one for demo-flatlander
 
 
 class SiteParser(HTMLParser):
@@ -25,7 +26,7 @@ def main():
     parser.feed(html)
 
     ids = [attrs["id"] for _, attrs in parser.elements if "id" in attrs]
-    duplicates = sorted({item for item in ids if ids.count(item) > 1})
+    duplicates = sorted(item for item, count in Counter(ids).items() if count > 1)
     assert not duplicates, f"duplicate ids: {', '.join(duplicates)}"
 
     by_id = {
@@ -81,7 +82,9 @@ def main():
         for tag, attrs in parser.elements
         if tag == "button" and "data-pick" in attrs
     }
-    assert pick_values == {"A", "B"}, "Flatlander must provide A and B choices"
+    assert pick_values == {"A", "B"}, (
+        "demo-flatlander must provide A and B choices"
+    )
 
     scripts = {
         attrs.get("src"): attrs
