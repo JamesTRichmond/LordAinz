@@ -7,7 +7,7 @@ import re
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_LIVE_REGIONS = 2  # one for demo-valence and one for demo-flatlander
+MINIMUM_LIVE_REGIONS = 2  # one for demo-valence and one for demo-flatlander
 INTERACTIVE_BEHAVIORS = (
     (
         "reveal button click handler",
@@ -92,8 +92,8 @@ def main():
         for tag, attrs in parser.elements
         if attrs.get("aria-live") == "polite"
     ]
-    assert len(live_regions) >= EXPECTED_LIVE_REGIONS, (
-        f"expected at least {EXPECTED_LIVE_REGIONS} live regions, "
+    assert len(live_regions) >= MINIMUM_LIVE_REGIONS, (
+        f"expected at least {MINIMUM_LIVE_REGIONS} live regions, "
         f"found {len(live_regions)}"
     )
 
@@ -117,6 +117,16 @@ def main():
         assert "defer" in scripts[script], f"{script} is not deferred"
 
     reliquary = (ROOT / "reliquary.js").read_text(encoding="utf-8")
+    for element_id in (
+        "vf-slider",
+        "fl-reveal",
+        "fl-next",
+        "fl-canvas-a",
+        "fl-canvas-b",
+    ):
+        assert element_id in reliquary, (
+            f"{element_id} is not wired into reliquary.js"
+        )
     for description, behavior in INTERACTIVE_BEHAVIORS:
         assert re.search(behavior, reliquary), (
             f"missing {description}"
