@@ -73,9 +73,13 @@
     // Maximum additional valence magnitude contributed by high heat (volatility boost).
     var MAX_HEAT_BOOST = 0.22;
 
-    // Convert slider value 0..100 to Celsius 8..48.
+    // Temperature range for the heat slider: slider 0..100 maps to MIN_TEMP_C..(MIN_TEMP_C+TEMP_RANGE_C).
+    var MIN_TEMP_C = 8;
+    var TEMP_RANGE_C = 40;
+
+    // Convert slider value 0..100 to Celsius (MIN_TEMP_C .. MIN_TEMP_C+TEMP_RANGE_C).
     function heatC(v) {
-      return Math.round(8 + (v / 100) * 40);
+      return Math.round(MIN_TEMP_C + (v / 100) * TEMP_RANGE_C);
     }
 
     // grounded valence as a function of body state s in [0,1] and heat h in [0,1]
@@ -223,7 +227,7 @@
     var boxG, boxB;
     function render() {
       var s = (+slider.value || 0) / 100;
-      var heat = (+heatSlider.value || 24) / 100;
+      var heat = (+heatSlider.value || 40) / 100;
       var v = valenceFor(s, heat);
       var env = envFor(heat);
       drawGauge(ctxG, boxG, v, true);
