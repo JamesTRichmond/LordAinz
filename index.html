@@ -33,7 +33,7 @@
 
   <!-- Icons + manifest -->
   <link rel="icon" href="favicon.svg" type="image/svg+xml" >
-  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%20100%20100%27%3E%3Ctext%20y=%27.9em%27%20font-size=%2790%27%3E%F0%9F%A4%98%3C/text%3E%3C/svg%3E" type="image/svg+xml" >
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%20100%20100%27%3E%3Ctext%20y=%27.9em%27%20font-size=%2790%27%3E%F0%9F%A4%98%3C/text%3E%3C/svg%3E" >
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" >
   <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png" >
   <link rel="apple-touch-icon" href="apple-touch-icon.png" >
@@ -143,12 +143,13 @@
             </svg>
           </span>
           <p class="pillar__sense">The sense of smell</p>
-          <h3 class="pillar__title" id="pillar-smell">Grounded valence</h3>
-          <p class="pillar__essence">Good-for-me, bad-for-me — felt, not labelled.</p>
-          <p class="pillar__body">The oldest verdict a body makes is chemical: approach or
-            recoil, settled before a single word. This organ installs that stake where it
-            is cheapest and most ancient — in scent. Not a category the mind predicts about
-            the world, but a pull the world exerts on it.</p>
+          <h3 class="pillar__title" id="pillar-smell">Computed olfaction</h3>
+          <p class="pillar__essence">From vision to volatiles — smell as inference, not magic.</p>
+          <p class="pillar__body">Vision dissects the scene into materials and their chemical
+            signatures. Temperature, humidity, wind, elevation, and neighboring materials
+            modulate how those signatures volatilize and mix. The result is matched against
+            a small memory of familiar compositions, producing a smell the user recognizes
+            — and a grounded verdict of good-for-me or bad-for-me.</p>
           <div class="pillar__rule" aria-hidden="true"></div>
           <p class="pillar__tag"><b>Grows</b> &nbsp;a reason to care</p>
         </article>
@@ -186,46 +187,74 @@
 
       <!-- RELIC I — Valence Flip -->
       <article class="demo" id="demo-valence" aria-labelledby="valence-h">
-        <p class="demo__eyebrow">Relic I · the sense of smell</p>
+        <p class="demo__eyebrow">Relic I · computed olfaction</p>
         <h3 class="demo__title" id="valence-h">Valence Flip</h3>
-        <p class="demo__lede measure">The scent below never changes — one fixed molecule.
-          Only the <em>body</em> moves. Drag its inner state and the <b>same</b> smell
-          swings from craving to revulsion. Beside it, a model that reads only the molecule
-          stays frozen: it can describe the smell, but it cannot feel what the smell is
-          <em>for</em>.</p>
+        <p class="demo__lede measure">The vision layer sees the same pastry, the same warm
+          stone counter, the same dry air — one fixed material composition. Yet drag the
+          body's inner state or the ambient heat, and the <b>same</b> inferred smell swings
+          from craving to revulsion. Beside it, a model that reads only the molecule stays
+          frozen: it can name the smell, but it cannot feel what the smell is <em>for</em>.</p>
 
-        <div id="olfaction-telemetry" class="telemetry-panel">
-          <!-- The Equilibrium Line (Visualizing Homeostasis) -->
-          <div class="telemetry-section center-align">
-            <div class="label">HOMEOSTATIC VARIANCE</div>
-            <div class="equilibrium-track">
-              <div class="equilibrium-center-mark"></div>
-              <div id="equilibrium-cursor" class="equilibrium-cursor"></div>
-            </div>
-            <div class="axis-labels">
-              <span>HYPO (STARVED)</span>
-              <span>HYPER (SATURATED)</span>
+        <div class="demo__stage">
+          <div class="vf-scent" aria-hidden="true">
+            <span class="vf-scent__wave"></span>
+            <span class="vf-scent__name">a warm, fat-rich pastry on dry stone</span>
+            <span class="vf-scent__sub">one material composition, parsed by vision</span>
+          </div>
+
+          <div class="vf-pipeline" role="group" aria-label="Vision-to-smell pipeline" aria-live="polite" aria-atomic="true">
+            <div class="vf-readings">
+              <div class="vf-readout">
+                <span class="vf-readout__label">Vision layer</span>
+                <span class="vf-readout__val" id="vf-vision">pastry lipids · warm stone · dry air</span>
+              </div>
+              <div class="vf-readout">
+                <span class="vf-readout__label">Environment</span>
+                <span class="vf-readout__val" id="vf-env">heat 24 °C · humidity 40% · still air</span>
+              </div>
+              <div class="vf-readout">
+                <span class="vf-readout__label">Inferred smell</span>
+                <span class="vf-readout__val" id="vf-smell">buttered bread, faint dust</span>
+              </div>
             </div>
           </div>
 
-          <!-- The State Ledger (Raw Internal Variables) -->
-          <div class="telemetry-section grid-2-col">
-            <div class="data-block">
-              <div class="label">METABOLIC POTENTIAL (E)</div>
-              <div id="val-energy" class="value gold-glow">100.00%</div>
+          <div class="vf-meters">
+            <figure class="vf-meter">
+              <canvas class="vf-gauge" id="vf-gauge-grounded" width="320" height="190"
+                      role="img" aria-label="Grounded valence gauge — swings with body state"></canvas>
+              <figcaption>
+                <b>Grounded valence</b><span class="vf-tag vf-tag--live">body + context aware</span>
+                <em id="vf-grounded-word">—</em>
+              </figcaption>
+            </figure>
+            <figure class="vf-meter">
+              <canvas class="vf-gauge" id="vf-gauge-blind" width="320" height="190"
+                      role="img" aria-label="State-blind model gauge — frozen on the molecule"></canvas>
+              <figcaption>
+                <b>State-blind model</b><span class="vf-tag vf-tag--frozen">molecule only</span>
+                <em>“smells pleasant”</em>
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="vf-controls">
+            <div class="vf-control">
+              <label class="vf-label" for="vf-slider">Inner state of the body</label>
+              <input type="range" id="vf-slider" min="0" max="100" value="6" step="1"
+                     aria-describedby="vf-caption" >
+              <div class="vf-ends" aria-hidden="true"><span>starving</span><span>overfull</span></div>
             </div>
-            <div class="data-block">
-              <div class="label">ENVIRONMENTAL SATURATION (S)</div>
-              <div id="val-saturation" class="value void-subdued">0.00%</div>
+            <div class="vf-control">
+              <label class="vf-label" for="vf-heat">Ambient heat</label>
+              <!-- value=40 maps to 24 °C via: 8 + (40/100)*40 = 24 -->
+              <input type="range" id="vf-heat" min="0" max="100" value="40" step="1"
+                     aria-describedby="vf-caption" >
+              <div class="vf-ends" aria-hidden="true"><span>cool 8 °C</span><span>hot 48 °C</span></div>
             </div>
           </div>
 
-          <!-- The Output (Grounded Valence) -->
-          <div class="telemetry-section computed-output">
-            <div class="label">GROUNDED VALENCE VECTOR (V)</div>
-            <div class="equation-display">V = (N × E) - (T × S)</div>
-            <div id="val-valence" class="value output-glow">INIT...</div>
-          </div>
+          <p class="vf-caption" id="vf-caption" aria-live="polite" role="status">—</p>
         </div>
       </article>
 

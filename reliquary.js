@@ -45,26 +45,72 @@
      ====================================================================== */
   (function valenceFlip() {
     var slider = document.getElementById("vf-slider");
+    var heatSlider = document.getElementById("vf-heat");
     var gG = document.getElementById("vf-gauge-grounded");
     var gB = document.getElementById("vf-gauge-blind");
     var caption = document.getElementById("vf-caption");
     var groundedWord = document.getElementById("vf-grounded-word");
-    if (!slider || !gG || !gB || !caption) return;
+    var visionEl = document.getElementById("vf-vision");
+    var envEl = document.getElementById("vf-env");
+    var smellEl = document.getElementById("vf-smell");
+    if (!slider || !heatSlider || !gG || !gB || !caption) return;
 
     var ctxG = gG.getContext("2d");
     var ctxB = gB.getContext("2d");
     if (!ctxG || !ctxB) return;
 
     // The state-blind model: it only ever sees the molecule, so it reports a
-    // single fixed hedonic prior, no matter what the body is doing.
+    // single fixed hedonic prior, no matter what the body or environment is doing.
     var BLIND_VALENCE = 0.55;
 
-    // grounded valence as a function of body state s in [0,1]
+    // The vision layer always sees the same material composition.
+    var COMPOSITION = "pastry lipids · warm stone · dry air";
+
+    // Fixed simulation parameters: the scene is always indoors, still air, moderate humidity.
+    var ENV_HUMIDITY = "40%";
+    var ENV_WIND = "still air";
+
+    // Maximum additional valence magnitude contributed by high heat (volatility boost).
+    var MAX_HEAT_BOOST = 0.22;
+
+    // Temperature range for the heat slider: slider 0..100 maps to MIN_TEMP_C..(MIN_TEMP_C+TEMP_RANGE_C).
+    var MIN_TEMP_C = 8;
+    var TEMP_RANGE_C = 40;
+    // Default heat slider value (maps to 24°C: MIN_TEMP_C + (DEFAULT_HEAT_VALUE/100)*TEMP_RANGE_C).
+    var DEFAULT_HEAT_VALUE = 40;
+
+    // Temperature thresholds (°C) for smell note transitions in envFor().
+    var TEMP_HOT_THRESHOLD_C = 36;
+    var TEMP_WARM_THRESHOLD_C = 28;
+    var TEMP_MILD_THRESHOLD_C = 18;
+
+    // Convert slider value 0..100 to Celsius (MIN_TEMP_C .. MIN_TEMP_C+TEMP_RANGE_C).
+    function heatC(v) {
+      return Math.round(MIN_TEMP_C + (v / 100) * TEMP_RANGE_C);
+    }
+
+    // grounded valence as a function of body state s in [0,1] and heat h in [0,1]
     //   s=0 (starving)  -> +1  craving
     //   s=0.5           ->  0  indifference
     //   s=1 (overfull)  -> -1  revulsion
-    function valenceFor(s) {
-      return Math.cos(s * Math.PI); // smooth +1 -> -1
+    // heat amplifies volatility: high heat makes the smell "louder" and also
+    // turns the positive craving sharper, or the negative revulsion sharper.
+    function valenceFor(s, h) {
+      var body = Math.cos(s * Math.PI); // smooth +1 -> -1
+      var heatBoost = MAX_HEAT_BOOST * h; // up to MAX_HEAT_BOOST magnitude from heat
+      return clamp(body * (1 + heatBoost), -1, 1);
+    }
+
+    // Infer an environment string and a human smell note from heat.
+    function envFor(heat) {
+      var c = heatC(heat * 100);
+      var ctx = "heat " + c + " °C · humidity " + ENV_HUMIDITY + " · " + ENV_WIND;
+      var note;
+      if (c >= TEMP_HOT_THRESHOLD_C)       note = "hot oil, toasted crust, dry dust";
+      else if (c >= TEMP_WARM_THRESHOLD_C) note = "buttered bread, warm stone";
+      else if (c >= TEMP_MILD_THRESHOLD_C) note = "buttered bread, faint dust";
+      else                                  note = "cool dough, mineral stone, little scent";
+      return { text: ctx, note: note };
     }
 
     // draw one semicircular needle gauge. v in [-1,1].
@@ -154,30 +200,34 @@
       return "revolted";
     }
 
-    function captionFor(s, v) {
+    function captionFor(s, heat, v) {
+      var c = heatC(heat * 100);
+      var baselineC = heatC(DEFAULT_HEAT_VALUE);
+      var rate = c > baselineC ? "faster" : c < baselineC ? "slower" : "at their baseline rate";
+      var envBit = " At " + c + " °C the volatiles rise " + rate + ";";
       var frozen =
         ' The state-blind model has not moved: <b>same molecule, same +0.55</b>' +
         " — it can name the smell, but cannot taste what it is <em>for</em>.";
       if (s < 0.28)
         return (
-          "<b>Starving.</b> The body throws its whole weight behind the smell — " +
+          "<b>Starving.</b>" + envBit + " the body throws its whole weight behind the smell — " +
           "grounded valence reads strong <b>craving</b>." +
           frozen
         );
       if (s < 0.6)
         return (
-          "<b>Comfortable.</b> The pull has bled away to near indifference; the " +
-          "same scent barely registers." +
+          "<b>Comfortable.</b>" + envBit + " the pull has bled away to near indifference; the " +
+          "same composition barely registers." +
           frozen
         );
       if (s < 0.82)
         return (
-          "<b>Full.</b> The verdict has crossed zero — the smell is starting to " +
+          "<b>Full.</b>" + envBit + " the verdict has crossed zero — the smell is starting to " +
           'turn <span class="rev">unwelcome</span>.' +
           frozen
         );
       return (
-        "<b>Overfull.</b> Identical scent, opposite verdict: grounded valence now " +
+        "<b>Overfull.</b>" + envBit + " identical composition, opposite verdict: grounded valence now " +
         'reads <span class="rev">revulsion</span>.' +
         frozen
       );
@@ -186,11 +236,16 @@
     var boxG, boxB;
     function render() {
       var s = (+slider.value || 0) / 100;
-      var v = valenceFor(s);
+      var heat = isNaN(+heatSlider.value) ? DEFAULT_HEAT_VALUE / 100 : +heatSlider.value / 100;
+      var v = valenceFor(s, heat);
+      var env = envFor(heat);
       drawGauge(ctxG, boxG, v, true);
       drawGauge(ctxB, boxB, BLIND_VALENCE, false);
       if (groundedWord) groundedWord.textContent = "“" + wordFor(v) + "”";
-      caption.innerHTML = captionFor(s, v);
+      if (visionEl) visionEl.textContent = COMPOSITION;
+      if (envEl) envEl.textContent = env.text;
+      if (smellEl) smellEl.textContent = env.note;
+      caption.innerHTML = captionFor(s, heat, v);
     }
 
     function resize() {
@@ -200,6 +255,7 @@
     }
 
     slider.addEventListener("input", render);
+    heatSlider.addEventListener("input", render);
     var rt;
     window.addEventListener("resize", function () {
       clearTimeout(rt);
