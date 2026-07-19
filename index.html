@@ -142,12 +142,9 @@
             </svg>
           </span>
           <p class="pillar__sense">The sense of smell</p>
-          <h3 class="pillar__title" id="pillar-smell">Grounded valence</h3>
-          <p class="pillar__essence">Good-for-me, bad-for-me — felt, not labelled.</p>
-          <p class="pillar__body">The oldest verdict a body makes is chemical: approach or
-            recoil, settled before a single word. This organ installs that stake where it
-            is cheapest and most ancient — in scent. Not a category the mind predicts about
-            the world, but a pull the world exerts on it.</p>
+          <h3 class="pillar__title" id="pillar-smell">Computed olfaction</h3>
+          <p class="pillar__essence">Vision decomposes the scene; chemistry infers the scent; body-state gives it meaning.</p>
+          <p class="pillar__body">A scene is parsed into visible materials — warm pastry, rain on concrete, hot engine oil. Each material implies a chemical signature; temperature, humidity, wind, and nearby surfaces reshape which volatiles reach the air. The result is matched against familiar smell memories, then modulated by the body: the same pastry becomes craving when hungry and revulsion when overfull. That final verdict — <b>grounded valence</b> — is felt, not labelled.</p>
           <div class="pillar__rule" aria-hidden="true"></div>
           <p class="pillar__tag"><b>Grows</b> &nbsp;a reason to care</p>
         </article>
@@ -183,35 +180,68 @@
         everything. Play the second and watch a blindness break. These are the mechanisms,
         encoded plainly; the private work runs deeper.</p>
 
-      <!-- RELIC I — Valence Flip -->
+      <!-- RELIC I — Computed Olfaction / Valence Flip -->
       <article class="demo" id="demo-valence" aria-labelledby="valence-h">
-        <p class="demo__eyebrow">Relic I · the sense of smell</p>
+        <p class="demo__eyebrow">Relic I · computed olfaction</p>
         <h3 class="demo__title" id="valence-h">Valence Flip</h3>
-        <p class="demo__lede measure">The scent below never changes — one fixed molecule.
-          Only the <em>body</em> moves. Drag its inner state and the <b>same</b> smell
-          swings from craving to revulsion. Beside it, a model that reads only the molecule
-          stays frozen: it can describe the smell, but it cannot feel what the smell is
-          <em>for</em>.</p>
+        <p class="demo__lede measure">The scene never changes — a warm pastry on a stone counter.
+          A state-blind model sees only a fixed molecule and calls it “pleasant.” The grounded
+          pipeline reads the scene, infers the volatile mix, applies the environment, then asks
+          the body what the smell is <em>for</em>. Drag the controls and watch the same computed
+          scent swing from craving to revulsion.</p>
 
         <div class="demo__stage">
-          <div class="vf-scent" aria-hidden="true">
-            <span class="vf-scent__wave"></span>
-            <span class="vf-scent__name">a warm, fat-rich pastry</span>
-            <span class="vf-scent__sub">identical input, every frame</span>
+          <!-- scene + diagnostic pipeline -->
+          <div class="vf-pipeline" aria-label="Computed olfaction pipeline">
+            <div class="vf-scene" aria-hidden="true">
+              <div class="vf-scene__stage">
+                <div class="vf-scene__bg"></div>
+                <div class="vf-scene__pastry">
+                  <span class="vf-scene__pastry-base"></span>
+                  <span class="vf-scene__steam"></span>
+                  <span class="vf-scene__steam vf-scene__steam--2"></span>
+                </div>
+                <div class="vf-scene__counter"></div>
+              </div>
+              <p class="vf-scene__caption">Scene: bakery counter · warm pastry on cool stone</p>
+            </div>
+
+            <div class="vf-dx" role="group" aria-label="Inferred composition and modifiers">
+              <div class="vf-dx__row vf-dx__row--materials">
+                <span class="vf-dx__label">Visible materials</span>
+                <ul class="vf-dx__chips" aria-label="Materials identified in the scene">
+                  <li class="vf-dx__chip vf-dx__chip--gold">butter / lipid</li>
+                  <li class="vf-dx__chip">browned malt</li>
+                  <li class="vf-dx__chip">cool stone</li>
+                </ul>
+              </div>
+              <div class="vf-dx__row vf-dx__row--composition">
+                <span class="vf-dx__label">Inferred volatiles</span>
+                <span class="vf-dx__value" id="vf-composition">diacetyl · furaneol · mineral dust</span>
+              </div>
+              <div class="vf-dx__row vf-dx__row--env">
+                <span class="vf-dx__label">Environmental modifiers</span>
+                <span class="vf-dx__value" id="vf-env-value">warm air · low wind · moderate humidity</span>
+              </div>
+              <div class="vf-dx__row vf-dx__row--memory">
+                <span class="vf-dx__label">Matched memory</span>
+                <span class="vf-dx__value" id="vf-memory">“fresh-baked pastry”</span>
+              </div>
+            </div>
           </div>
 
           <div class="vf-meters">
             <figure class="vf-meter">
               <canvas class="vf-gauge" id="vf-gauge-grounded" width="320" height="190"
-                      role="img" aria-label="Grounded valence gauge — swings with body state"></canvas>
+                      role="img" aria-label="Grounded valence gauge — swings with body state and environment"></canvas>
               <figcaption>
-                <b>Grounded valence</b><span class="vf-tag vf-tag--live">body-aware</span>
+                <b>Grounded valence</b><span class="vf-tag vf-tag--live">scene + body</span>
                 <em id="vf-grounded-word">—</em>
               </figcaption>
             </figure>
             <figure class="vf-meter">
               <canvas class="vf-gauge" id="vf-gauge-blind" width="320" height="190"
-                      role="img" aria-label="State-blind model gauge — frozen on the molecule"></canvas>
+                      role="img" aria-label="State-blind molecule model gauge — frozen on the molecule"></canvas>
               <figcaption>
                 <b>State-blind model</b><span class="vf-tag vf-tag--frozen">molecule only</span>
                 <em>“smells pleasant”</em>
@@ -219,11 +249,19 @@
             </figure>
           </div>
 
-          <div class="vf-control">
-            <label class="vf-label" for="vf-slider">Inner state of the body</label>
-            <input type="range" id="vf-slider" min="0" max="100" value="6" step="1"
-                   aria-describedby="vf-caption" >
-            <div class="vf-ends" aria-hidden="true"><span>starving</span><span>overfull</span></div>
+          <div class="vf-controls">
+            <div class="vf-control">
+              <label class="vf-label" for="vf-slider">Inner state of the body</label>
+              <input type="range" id="vf-slider" min="0" max="100" value="6" step="1"
+                     aria-describedby="vf-caption" >
+              <div class="vf-ends" aria-hidden="true"><span>starving</span><span>overfull</span></div>
+            </div>
+            <div class="vf-control vf-control--env">
+              <label class="vf-label" for="vf-env-slider">Air temperature</label>
+              <input type="range" id="vf-env-slider" min="0" max="100" value="55" step="1"
+                     aria-describedby="vf-caption" >
+              <div class="vf-ends" aria-hidden="true"><span>cold</span><span>hot</span></div>
+            </div>
           </div>
 
           <p class="vf-caption" id="vf-caption" aria-live="polite" role="status">—</p>
