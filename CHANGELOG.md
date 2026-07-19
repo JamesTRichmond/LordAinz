@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+### SEO & Quality Hardening (2026-07-19)
+
+#### ✅ Completed
+- Added `og:image:secure_url` meta tag to `index.html`.
+- Added canonical `<link>` to `404.html`.
+- Extended `Static Site CI` to verify:
+  - `og.png` dimensions are exactly `1200x630`.
+  - `sitemap.xml` has a `<lastmod>` within the last 90 days.
+
+#### 🧪 Validation Outcome
+- Static metadata checks now include image and sitemap freshness validation.
+
+---
+
+## [Released]
+
+## [1.0.0] — 2026-07-19
+
 ### CI & Quality Hardening (2026-07-15)
 
 #### ✅ Completed
