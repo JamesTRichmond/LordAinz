@@ -76,7 +76,7 @@ def main():
     )
 
     pick_values = {
-        attrs.get("data-pick")
+        attrs["data-pick"]
         for tag, attrs in parser.elements
         if tag == "button" and "data-pick" in attrs
     }
