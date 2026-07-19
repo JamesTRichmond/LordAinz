@@ -18,6 +18,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install Python image dependencies
+        run: |
+          pip install Pillow
+
       - name: Verify launch-critical files exist
         run: |
           required_files=(
