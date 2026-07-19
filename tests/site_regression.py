@@ -58,8 +58,13 @@ def main():
         if tag == "canvas" and attrs.get("aria-hidden") != "true"
     ]
     for attrs in canvases:
-        assert attrs.get("role") == "img", "canvas is missing role=img"
-        assert attrs.get("aria-label"), "canvas is missing an accessible label"
+        canvas_name = attrs.get("id", "unnamed canvas")
+        assert attrs.get("role") == "img", (
+            f"{canvas_name} is missing role=img"
+        )
+        assert attrs.get("aria-label"), (
+            f"{canvas_name} is missing an accessible label"
+        )
 
     live_regions = [
         attrs for tag, attrs in parser.elements
