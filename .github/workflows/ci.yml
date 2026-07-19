@@ -18,17 +18,74 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Verify required files exist
+      - name: Verify launch-critical files exist
         run: |
-          test -f index.html
-          test -f README.md
-          echo "Required files found."
+          required_files=(
+            index.html
+            styles.css
+            throne.js
+            reliquary.js
+            README.md
+            CNAME
+            404.html
+            robots.txt
+            sitemap.xml
+            site.webmanifest
+            favicon.svg
+            og.png
+            icon-192.png
+            icon-512.png
+            apple-touch-icon.png
+          )
+          for file in "${required_files[@]}"; do
+            test -f "$file" || { echo "Missing required file: $file"; exit 1; }
+          done
+          echo "Launch-critical files found."
 
       - name: Basic HTML sanity check
         run: |
-          grep -q "<!doctype html\\|<!DOCTYPE html" index.html
+          grep -q "<!doctype html\|<!DOCTYPE html" index.html
           grep -q "<title>" index.html
+          grep -q "<script src=\"throne.js\" defer></script>" index.html
+          grep -q "<script src=\"reliquary.js\" defer></script>" index.html
           echo "Basic HTML checks passed."
+
+      - name: Validate static metadata
+        run: |
+          python3 - <<'PY'
+          import json
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          json.loads(Path("site.webmanifest").read_text(encoding="utf-8"))
+          ET.parse("sitemap.xml")
+
+          cname = Path("CNAME").read_text(encoding="utf-8").strip()
+          if cname != "lordai.nz":
+              raise SystemExit(f"Unexpected CNAME: {cname!r}")
+
+          robots = Path("robots.txt").read_text(encoding="utf-8")
+          if "Sitemap: https://lordai.nz/sitemap.xml" not in robots:
+              raise SystemExit("robots.txt does not reference the canonical sitemap")
+
+          html = Path("index.html").read_text(encoding="utf-8")
+          for ref in [
+              "https://lordai.nz/",
+              "https://lordai.nz/og.png",
+              "favicon.svg",
+              "icon-192.png",
+              "icon-512.png",
+              "apple-touch-icon.png",
+              "site.webmanifest",
+              "styles.css",
+              "throne.js",
+              "reliquary.js",
+          ]:
+              if ref not in html:
+                  raise SystemExit(f"index.html is missing expected reference: {ref}")
+
+          print("Static metadata checks passed.")
+          PY
 
       - name: Validate HTML (W3C Nu)
         run: |
@@ -41,12 +98,17 @@ jobs:
           path: |
             index.html
             styles.css
-            *.js
-            *.png
-            *.svg
-            *.xml
-            *.txt
+            throne.js
+            reliquary.js
+            README.md
             CNAME
             404.html
+            robots.txt
+            sitemap.xml
             site.webmanifest
-          if-no-files-found: warn
+            favicon.svg
+            og.png
+            icon-192.png
+            icon-512.png
+            apple-touch-icon.png
+          if-no-files-found: error
