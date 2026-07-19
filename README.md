@@ -4,10 +4,12 @@
 
 # LordAi.nz
 
-A slick, self-contained static landing page for **Lord Ainz** — the Sorcerer-King
-familiar. One file (`index.html`), no app runtime, no package install, no tracking.
-Regal void-and-gold theme, the 🤘, and two browser-native interactive demos:
-Valence Flip and The Flatlander.
+A self-contained static landing page for **Lord Ainz** — the Sorcerer-King familiar.
+No app runtime, no package install, no tracking. Regal void-and-gold theme, the 🤘,
+and two browser-native interactive demos: Computed Olfaction (Valence Flip) and The
+Flatlander. The thesis is computed senses and embodied perception: a machine that
+figures out what a scene is made of, how the environment changes it, and what that
+means to a body with needs.
 
 > **Status: launch hardening.** The repository is public and contains a `CNAME`
 > for `lordai.nz`. Final publication still depends on GitHub Pages settings,
