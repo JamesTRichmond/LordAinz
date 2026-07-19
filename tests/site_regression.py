@@ -8,6 +8,24 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_LIVE_REGIONS = 2  # one for demo-valence and one for demo-flatlander
+INTERACTIVE_BEHAVIORS = (
+    (
+        "reveal button click handler",
+        r"""btnReveal\.addEventListener\(\s*["']click["']\s*,\s*reveal\s*\)""",
+    ),
+    (
+        "next-round button click handler",
+        r"""btnNext\.addEventListener\(\s*["']click["']\s*,\s*newRound\s*\)""",
+    ),
+    (
+        "valence slider input listener",
+        r"""slider\.addEventListener\(\s*["']input["']\s*,\s*render\s*\)""",
+    ),
+    (
+        "reveal button pressed-state update",
+        r"""btnReveal\.setAttribute\(\s*["']aria-pressed["']\s*,\s*["']true["']\s*\)""",
+    ),
+)
 
 
 class SiteParser(HTMLParser):
@@ -96,14 +114,9 @@ def main():
         assert "defer" in scripts[script], f"{script} is not deferred"
 
     reliquary = (ROOT / "reliquary.js").read_text(encoding="utf-8")
-    for behavior in (
-        r"""btnReveal\.addEventListener\(\s*["']click["']\s*,\s*reveal\s*\)""",
-        r"""btnNext\.addEventListener\(\s*["']click["']\s*,\s*newRound\s*\)""",
-        r"""slider\.addEventListener\(\s*["']input["']\s*,\s*render\s*\)""",
-        r"""btnReveal\.setAttribute\(\s*["']aria-pressed["']\s*,\s*["']true["']\s*\)""",
-    ):
+    for description, behavior in INTERACTIVE_BEHAVIORS:
         assert re.search(behavior, reliquary), (
-            f"missing interactive behavior: {behavior}"
+            f"missing {description}"
         )
 
     print("Site regression checks passed.")
