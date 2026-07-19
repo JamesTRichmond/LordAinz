@@ -36,6 +36,7 @@ jobs:
             icon-192.png
             icon-512.png
             apple-touch-icon.png
+            humans.txt
           )
           for file in "${required_files[@]}"; do
             test -f "$file" || { echo "Missing required file: $file"; exit 1; }
@@ -49,6 +50,9 @@ jobs:
           grep -q "<script src=\"throne.js\" defer></script>" index.html
           grep -q "<script src=\"reliquary.js\" defer></script>" index.html
           echo "Basic HTML checks passed."
+
+      - name: Run site regression checks
+        run: python3 tests/site_regression.py
 
       - name: Validate static metadata
         run: |
@@ -80,6 +84,7 @@ jobs:
               "styles.css",
               "throne.js",
               "reliquary.js",
+              "humans.txt",
           ]:
               if ref not in html:
                   raise SystemExit(f"index.html is missing expected reference: {ref}")
@@ -111,4 +116,5 @@ jobs:
             icon-192.png
             icon-512.png
             apple-touch-icon.png
+            humans.txt
           if-no-files-found: error
