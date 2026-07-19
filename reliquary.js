@@ -45,10 +45,14 @@
      ====================================================================== */
   (function valenceFlip() {
     var slider = document.getElementById("vf-slider");
+    var envSlider = document.getElementById("vf-env-slider");
     var gG = document.getElementById("vf-gauge-grounded");
     var gB = document.getElementById("vf-gauge-blind");
     var caption = document.getElementById("vf-caption");
     var groundedWord = document.getElementById("vf-grounded-word");
+    var compEl = document.getElementById("vf-composition");
+    var envEl = document.getElementById("vf-env-value");
+    var memEl = document.getElementById("vf-memory");
     if (!slider || !gG || !gB || !caption) return;
 
     var ctxG = gG.getContext("2d");
@@ -56,15 +60,42 @@
     if (!ctxG || !ctxB) return;
 
     // The state-blind model: it only ever sees the molecule, so it reports a
-    // single fixed hedonic prior, no matter what the body is doing.
+    // single fixed hedonic prior, no matter what the body or environment is doing.
     var BLIND_VALENCE = 0.55;
 
-    // grounded valence as a function of body state s in [0,1]
-    //   s=0 (starving)  -> +1  craving
-    //   s=0.5           ->  0  indifference
-    //   s=1 (overfull)  -> -1  revulsion
-    function valenceFor(s) {
-      return Math.cos(s * Math.PI); // smooth +1 -> -1
+    // scene and volatile model for the computed-olfaction pipeline
+    var SCENE = {
+      materials: ["butter / lipid", "browned malt", "cool stone"],
+      notes: {
+        cold:  { composition: "diacetyl · furaneol · mineral dust", memory: "day-old bakery" },
+        warm:  { composition: "diacetyl · furaneol · yeast ester", memory: "fresh-baked pastry" },
+        hot:   { composition: "browned lactone · caramel · acrid stone", memory: "scorched kitchen air" }
+      }
+    };
+
+    // environmental temperature t in [0,1]
+    function envLabel(t) {
+      if (t < 0.25) return "cold air · low wind · low volatility";
+      if (t < 0.45) return "cool air · low wind · mineral edge";
+      if (t < 0.65) return "warm air · low wind · moderate humidity";
+      if (t < 0.85) return "warm air · still · rich volatiles";
+      return "hot air · dry · volatiles spike";
+    }
+
+    function envWord(t) {
+      if (t < 0.35) return "cold";
+      if (t < 0.70) return "warm";
+      return "hot";
+    }
+
+    // grounded valence as a function of body state s and environment t, both in [0,1]
+    // body: s=0 (starving) -> +1, s=0.5 -> 0, s=1 (overfull) -> -1
+    // environment: hot air slightly amplifies the verdict in either direction by
+    // increasing volatile intensity; cold air dampens it.
+    function valenceFor(s, t) {
+      var body = Math.cos(s * Math.PI); // +1 -> -1
+      var envMod = 0.92 + t * 0.16;     // 0.92 -> 1.08
+      return clamp(body * envMod, -1, 1);
     }
 
     // draw one semicircular needle gauge. v in [-1,1].
@@ -154,43 +185,62 @@
       return "revolted";
     }
 
-    function captionFor(s, v) {
+    function captionFor(s, t, v) {
       var frozen =
-        ' The state-blind model has not moved: <b>same molecule, same +0.55</b>' +
-        " — it can name the smell, but cannot taste what it is <em>for</em>.";
+        ' The state-blind model has not moved: <b>same molecule memory, same +0.55</b>' +
+        " — it can name the smell, but cannot feel what it is <em>for</em>.";
+      var envNote =
+        t > 0.72
+          ? " Heat pushes more volatiles into the air, sharpening the verdict."
+          : t < 0.28
+          ? " Cold suppresses volatilization, muting the scent."
+          : "";
       if (s < 0.28)
         return (
-          "<b>Starving.</b> The body throws its whole weight behind the smell — " +
+          "<b>Starving.</b> The body throws its whole weight behind the computed scent — " +
           "grounded valence reads strong <b>craving</b>." +
+          envNote +
           frozen
         );
       if (s < 0.6)
         return (
           "<b>Comfortable.</b> The pull has bled away to near indifference; the " +
-          "same scent barely registers." +
+          "same inferred mix barely registers." +
+          envNote +
           frozen
         );
       if (s < 0.82)
         return (
           "<b>Full.</b> The verdict has crossed zero — the smell is starting to " +
           'turn <span class="rev">unwelcome</span>.' +
+          envNote +
           frozen
         );
       return (
-        "<b>Overfull.</b> Identical scent, opposite verdict: grounded valence now " +
+        "<b>Overfull.</b> Same scene, same pipeline, opposite verdict: grounded valence now " +
         'reads <span class="rev">revulsion</span>.' +
+        envNote +
         frozen
       );
+    }
+
+    function updateDiagnostics(t) {
+      var note = SCENE.notes[envWord(t)];
+      if (compEl) compEl.textContent = note.composition;
+      if (envEl) envEl.textContent = envLabel(t);
+      if (memEl) memEl.textContent = "“" + note.memory + "”";
     }
 
     var boxG, boxB;
     function render() {
       var s = (+slider.value || 0) / 100;
-      var v = valenceFor(s);
+      var t = envSlider ? (+envSlider.value || 55) / 100 : 0.55;
+      var v = valenceFor(s, t);
       drawGauge(ctxG, boxG, v, true);
       drawGauge(ctxB, boxB, BLIND_VALENCE, false);
       if (groundedWord) groundedWord.textContent = "“" + wordFor(v) + "”";
-      caption.innerHTML = captionFor(s, v);
+      caption.innerHTML = captionFor(s, t, v);
+      updateDiagnostics(t);
     }
 
     function resize() {
@@ -200,6 +250,7 @@
     }
 
     slider.addEventListener("input", render);
+    if (envSlider) envSlider.addEventListener("input", render);
     var rt;
     window.addEventListener("resize", function () {
       clearTimeout(rt);
