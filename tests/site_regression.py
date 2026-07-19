@@ -5,6 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+EXPECTED_LIVE_REGIONS = 2  # one status region for each interactive demo
 
 
 class SiteParser(HTMLParser):
@@ -70,7 +71,9 @@ def main():
         attrs for tag, attrs in parser.elements
         if attrs.get("aria-live") == "polite"
     ]
-    assert len(live_regions) >= 2, "interactive status regions are missing"
+    assert len(live_regions) >= EXPECTED_LIVE_REGIONS, (
+        "interactive status regions are missing"
+    )
 
     pick_values = {
         attrs.get("data-pick")
@@ -79,8 +82,14 @@ def main():
     }
     assert pick_values == {"A", "B"}, "Flatlander must provide A and B choices"
 
+    scripts = {
+        attrs.get("src"): attrs
+        for tag, attrs in parser.elements
+        if tag == "script"
+    }
     for script in ("throne.js", "reliquary.js"):
-        assert f'src="{script}" defer' in html, f"{script} is not deferred"
+        assert script in scripts, f"{script} is not referenced"
+        assert "defer" in scripts[script], f"{script} is not deferred"
 
     reliquary = (ROOT / "reliquary.js").read_text(encoding="utf-8")
     for behavior in (
