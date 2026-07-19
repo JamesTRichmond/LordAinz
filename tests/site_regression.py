@@ -2,6 +2,7 @@
 
 from html.parser import HTMLParser
 from pathlib import Path
+import re
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -93,12 +94,14 @@ def main():
 
     reliquary = (ROOT / "reliquary.js").read_text(encoding="utf-8")
     for behavior in (
-        'btnReveal.addEventListener("click", reveal)',
-        'btnNext.addEventListener("click", newRound)',
-        'slider.addEventListener("input", render)',
-        'btnReveal.setAttribute("aria-pressed", "true")',
+        r"""btnReveal\.addEventListener\(\s*["']click["']\s*,\s*reveal\s*\)""",
+        r"""btnNext\.addEventListener\(\s*["']click["']\s*,\s*newRound\s*\)""",
+        r"""slider\.addEventListener\(\s*["']input["']\s*,\s*render\s*\)""",
+        r"""btnReveal\.setAttribute\(\s*["']aria-pressed["']\s*,\s*["']true["']\s*\)""",
     ):
-        assert behavior in reliquary, f"missing interactive behavior: {behavior}"
+        assert re.search(behavior, reliquary), (
+            f"missing interactive behavior: {behavior}"
+        )
 
     print("Site regression checks passed.")
 
