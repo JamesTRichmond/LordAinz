@@ -54,7 +54,9 @@ jobs:
         run: |
           python3 - <<'PY'
           import json
+          import re
           import xml.etree.ElementTree as ET
+          from datetime import datetime, timezone
           from pathlib import Path
 
           json.loads(Path("site.webmanifest").read_text(encoding="utf-8"))
@@ -83,6 +85,25 @@ jobs:
           ]:
               if ref not in html:
                   raise SystemExit(f"index.html is missing expected reference: {ref}")
+
+          # og.png must be 1200x630 for social cards
+          try:
+              from PIL import Image
+          except Exception as e:
+              raise SystemExit(f"PIL not available: {e}")
+          img = Image.open("og.png")
+          if img.size != (1200, 630):
+              raise SystemExit(f"og.png must be 1200x630, got {img.width}x{img.height}")
+
+          # sitemap lastmod must exist and be within the last 90 days
+          tree = ET.parse("sitemap.xml")
+          lastmod_text = tree.findtext(".//{http://www.sitemaps.org/schemas/sitemap/0.9}lastmod")
+          if not lastmod_text:
+              raise SystemExit("sitemap.xml is missing <lastmod>")
+          lastmod = datetime.fromisoformat(lastmod_text).replace(tzinfo=timezone.utc)
+          age_days = (datetime.now(timezone.utc) - lastmod).days
+          if age_days > 90:
+              raise SystemExit(f"sitemap.xml lastmod is {age_days} days old (> 90)")
 
           print("Static metadata checks passed.")
           PY
