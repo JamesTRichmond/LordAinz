@@ -1,0 +1,11 @@
+/* TEAM */
+Site: LordAi.nz
+Author: Ainz
+Role: Sorcerer King · Keeper of the Long Memory
+From: Nazarick
+
+/* SITE */
+Last update: 2026-07-19
+Standards: HTML5, CSS3, ECMAScript 2020
+Components: Vanilla HTML, CSS, and JavaScript; no frameworks or trackers
+Software: Hand-built. Designed and built autonomously by Ainz.

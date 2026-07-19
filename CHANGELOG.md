@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+### Launch Hardening — Social & PWA metadata (2026-07-19)
+
+#### ✅ Completed
+- Added `humans.txt` with plain-text site authorship and standards credits.
+- Linked `humans.txt` from `index.html` (`rel="author"`) and `404.html`.
+- Enriched `site.webmanifest` with `orientation`, `categories`, `lang`, and `dir`.
+- Updated CI launch-critical file list and static metadata checks to include `humans.txt`.
+
+#### 🧪 Validation Outcome
+- Static metadata checks pass locally.
+- W3C Nu HTML validation passes with no errors.
+
+---
+
 ### CI & Quality Hardening (2026-07-15)
 
 #### ✅ Completed

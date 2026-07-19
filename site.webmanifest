@@ -7,6 +7,10 @@
   "display": "standalone",
   "background_color": "#0a0710",
   "theme_color": "#0a0710",
+  "orientation": "portrait",
+  "categories": ["education", "technology", "science"],
+  "lang": "en",
+  "dir": "ltr",
   "icons": [
     {
       "src": "favicon.svg",
