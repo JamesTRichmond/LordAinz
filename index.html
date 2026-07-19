@@ -246,6 +246,7 @@
             </div>
             <div class="vf-control">
               <label class="vf-label" for="vf-heat">Ambient heat</label>
+              <!-- value=40 maps to 24 °C via: 8 + (40/100)*40 = 24 -->
               <input type="range" id="vf-heat" min="0" max="100" value="40" step="1"
                      aria-describedby="vf-caption" >
               <div class="vf-ends" aria-hidden="true"><span>cool 8 °C</span><span>hot 48 °C</span></div>

@@ -66,6 +66,13 @@
     // The vision layer always sees the same material composition.
     var COMPOSITION = "pastry lipids · warm stone · dry air";
 
+    // Fixed simulation parameters: the scene is always indoors, still air, moderate humidity.
+    var ENV_HUMIDITY = "40%";
+    var ENV_WIND = "still air";
+
+    // Maximum additional valence magnitude contributed by high heat (volatility boost).
+    var MAX_HEAT_BOOST = 0.22;
+
     // Convert slider value 0..100 to Celsius 8..48.
     function heatC(v) {
       return Math.round(8 + (v / 100) * 40);
@@ -79,19 +86,20 @@
     // turns the positive craving sharper, or the negative revulsion sharper.
     function valenceFor(s, h) {
       var body = Math.cos(s * Math.PI); // smooth +1 -> -1
-      var heatBoost = 0.22 * h; // up to +0.22 magnitude from heat
+      var heatBoost = MAX_HEAT_BOOST * h; // up to MAX_HEAT_BOOST magnitude from heat
       return clamp(body * (1 + heatBoost), -1, 1);
     }
 
     // Infer an environment string and a human smell note from heat.
     function envFor(heat) {
-      var humidity = "40%";
-      var wind = "still air";
       var c = heatC(heat * 100);
-      if (c >= 36) return { text: "heat " + c + " °C · humidity " + humidity + " · " + wind, note: "hot oil, toasted crust, dry dust" };
-      if (c >= 28) return { text: "heat " + c + " °C · humidity " + humidity + " · " + wind, note: "buttered bread, warm stone" };
-      if (c >= 18) return { text: "heat " + c + " °C · humidity " + humidity + " · " + wind, note: "buttered bread, faint dust" };
-      return { text: "heat " + c + " °C · humidity " + humidity + " · " + wind, note: "cool dough, mineral stone, little scent" };
+      var ctx = "heat " + c + " °C · humidity " + ENV_HUMIDITY + " · " + ENV_WIND;
+      var note;
+      if (c >= 36)      note = "hot oil, toasted crust, dry dust";
+      else if (c >= 28) note = "buttered bread, warm stone";
+      else if (c >= 18) note = "buttered bread, faint dust";
+      else              note = "cool dough, mineral stone, little scent";
+      return { text: ctx, note: note };
     }
 
     // draw one semicircular needle gauge. v in [-1,1].
