@@ -1,0 +1,105 @@
+name: PR QA — Static Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  static-qa:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install HTML + link validators
+        run: |
+          npm install -g htmlhint@1.1.4 markdown-link-check@3.12.2
+
+      - name: Run HTML linter (HTMLHint)
+        run: |
+          cat > .htmlhint.json <<'JSON'
+          {
+            "tagname-lowercase": true,
+            "attr-lowercase": true,
+            "attr-value-double-quotes": true,
+            "attr-value-not-empty": false,
+            "attr-no-duplication": true,
+            "doctype-first": true,
+            "tag-pair": true,
+            "tag-self-close": false,
+            "spec-char-escape": true,
+            "id-unique": true,
+            "src-not-empty": true,
+            "title-require": true,
+            "alt-require": true,
+            "doctype-html5": true,
+            "style-disabled": false,
+            "inline-style-disabled": false,
+            "inline-script-disabled": false,
+            "space-tab-mixed-disabled": "space",
+            "id-class-ad-disabled": false,
+            "href-abs-or-rel": false,
+            "attr-unsafe-chars": true,
+            "head-script-disabled": false
+          }
+          JSON
+          htmlhint "*.html"
+
+      - name: Check internal links
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+
+          root = Path(".")
+          html_files = list(root.glob("*.html"))
+          missing = []
+
+          for html_file in html_files:
+              text = html_file.read_text(encoding="utf-8")
+              # href/src references to local files
+              refs = set(re.findall(r'(?:href|src)="([^"]+)"', text))
+              for ref in refs:
+                  if ref.startswith(("http://", "https://", "data:", "mailto:", "#")):
+                      continue
+                  target = root / ref.split("?")[0].split("#")[0]
+                  if not target.exists():
+                      missing.append(f"{html_file} -> {ref}")
+
+          if missing:
+              print("Missing internal references:")
+              for m in missing:
+                  print(f"  {m}")
+              raise SystemExit(1)
+
+          print("All internal references resolved.")
+          PY
+
+      - name: Check Markdown links
+        run: |
+          find . -maxdepth 2 -name "*.md" -print0 | xargs -0 -I {} npx markdown-link-check {} --quiet || true
+
+      - name: Smoke test Flatlander DOM
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html = Path("index.html").read_text(encoding="utf-8")
+          required = [
+              'id="demo-flatlander"',
+              'id="flat-h"',
+              'id="fl-canvas-a"',
+              'id="fl-canvas-b"',
+              'id="fl-reveal"',
+              'id="fl-next"',
+              'data-pick="A"',
+              'data-pick="B"',
+          ]
+          missing = [r for r in required if r not in html]
+          if missing:
+              raise SystemExit(f"Missing Flatlander elements: {missing}")
+          print("Flatlander DOM smoke test passed.")
+          PY
