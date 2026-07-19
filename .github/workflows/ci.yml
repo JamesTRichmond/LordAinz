@@ -50,6 +50,9 @@ jobs:
           grep -q "<script src=\"reliquary.js\" defer></script>" index.html
           echo "Basic HTML checks passed."
 
+      - name: Run site regression checks
+        run: python3 tests/site_regression.py
+
       - name: Validate static metadata
         run: |
           python3 - <<'PY'
