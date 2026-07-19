@@ -36,6 +36,7 @@ jobs:
             icon-192.png
             icon-512.png
             apple-touch-icon.png
+            humans.txt
           )
           for file in "${required_files[@]}"; do
             test -f "$file" || { echo "Missing required file: $file"; exit 1; }
@@ -80,6 +81,7 @@ jobs:
               "styles.css",
               "throne.js",
               "reliquary.js",
+              "humans.txt",
           ]:
               if ref not in html:
                   raise SystemExit(f"index.html is missing expected reference: {ref}")
@@ -111,4 +113,5 @@ jobs:
             icon-192.png
             icon-512.png
             apple-touch-icon.png
+            humans.txt
           if-no-files-found: error
