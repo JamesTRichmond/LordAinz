@@ -208,19 +208,19 @@
       var frozen =
         ' The state-blind model has not moved: <b>same molecule, same +0.55</b>' +
         " — it can name the smell, but cannot taste what it is <em>for</em>.";
-      if (s < 0.28)
+      if (v >= 0.55)
         return (
           "<b>Starving.</b>" + envBit + " the body throws its whole weight behind the smell — " +
           "grounded valence reads strong <b>craving</b>." +
           frozen
         );
-      if (s < 0.6)
+      if (v > -0.15)
         return (
           "<b>Comfortable.</b>" + envBit + " the pull has bled away to near indifference; the " +
           "same composition barely registers." +
           frozen
         );
-      if (s < 0.82)
+      if (v > -0.55)
         return (
           "<b>Full.</b>" + envBit + " the verdict has crossed zero — the smell is starting to " +
           'turn <span class="rev">unwelcome</span>.' +
@@ -245,7 +245,8 @@
       if (visionEl) visionEl.textContent = COMPOSITION;
       if (envEl) envEl.textContent = env.text;
       if (smellEl) smellEl.textContent = env.note;
-      caption.innerHTML = captionFor(s, heat, v);
+      heatSlider.setAttribute("aria-valuetext", heatC(heat * 100) + " °C");
+      caption.innerHTML = captionFor(heat, v);
     }
 
     function resize() {
