@@ -62,7 +62,7 @@ def main():
         assert attrs.get("aria-label"), "canvas is missing an accessible label"
 
     live_regions = [
-        attrs for _, attrs in parser.elements
+        attrs for tag, attrs in parser.elements
         if attrs.get("aria-live") == "polite"
     ]
     assert len(live_regions) >= 2, "interactive status regions are missing"
