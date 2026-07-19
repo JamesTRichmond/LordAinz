@@ -200,7 +200,7 @@
       return "revolted";
     }
 
-    function captionFor(s, heat, v) {
+    function captionFor(heat, v) {
       var c = heatC(heat * 100);
       var baselineC = heatC(DEFAULT_HEAT_VALUE);
       var rate = c > baselineC ? "faster" : c < baselineC ? "slower" : "at their baseline rate";
