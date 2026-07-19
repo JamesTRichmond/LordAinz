@@ -236,7 +236,7 @@
     var boxG, boxB;
     function render() {
       var s = (+slider.value || 0) / 100;
-      var heat = (+heatSlider.value || DEFAULT_HEAT_VALUE) / 100;
+      var heat = isNaN(+heatSlider.value) ? DEFAULT_HEAT_VALUE / 100 : +heatSlider.value / 100;
       var v = valenceFor(s, heat);
       var env = envFor(heat);
       drawGauge(ctxG, boxG, v, true);
