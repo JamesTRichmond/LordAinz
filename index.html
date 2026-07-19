@@ -33,7 +33,7 @@
 
   <!-- Icons + manifest -->
   <link rel="icon" href="favicon.svg" type="image/svg+xml" >
-  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%20100%20100%27%3E%3Ctext%20y=%27.9em%27%20font-size=%2790%27%3E%F0%9F%A4%98%3C/text%3E%3C/svg%3E" >
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%20100%20100%27%3E%3Ctext%20y=%27.9em%27%20font-size=%2790%27%3E%F0%9F%A4%98%3C/text%3E%3C/svg%3E" type="image/svg+xml" >
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" >
   <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png" >
   <link rel="apple-touch-icon" href="apple-touch-icon.png" >
@@ -193,40 +193,38 @@
           stays frozen: it can describe the smell, but it cannot feel what the smell is
           <em>for</em>.</p>
 
-        <div class="demo__stage">
-          <div class="vf-scent" aria-hidden="true">
-            <span class="vf-scent__wave"></span>
-            <span class="vf-scent__name">a warm, fat-rich pastry</span>
-            <span class="vf-scent__sub">identical input, every frame</span>
+        <div id="olfaction-telemetry" class="telemetry-panel">
+          <!-- The Equilibrium Line (Visualizing Homeostasis) -->
+          <div class="telemetry-section center-align">
+            <div class="label">HOMEOSTATIC VARIANCE</div>
+            <div class="equilibrium-track">
+              <div class="equilibrium-center-mark"></div>
+              <div id="equilibrium-cursor" class="equilibrium-cursor"></div>
+            </div>
+            <div class="axis-labels">
+              <span>HYPO (STARVED)</span>
+              <span>HYPER (SATURATED)</span>
+            </div>
           </div>
 
-          <div class="vf-meters">
-            <figure class="vf-meter">
-              <canvas class="vf-gauge" id="vf-gauge-grounded" width="320" height="190"
-                      role="img" aria-label="Grounded valence gauge — swings with body state"></canvas>
-              <figcaption>
-                <b>Grounded valence</b><span class="vf-tag vf-tag--live">body-aware</span>
-                <em id="vf-grounded-word">—</em>
-              </figcaption>
-            </figure>
-            <figure class="vf-meter">
-              <canvas class="vf-gauge" id="vf-gauge-blind" width="320" height="190"
-                      role="img" aria-label="State-blind model gauge — frozen on the molecule"></canvas>
-              <figcaption>
-                <b>State-blind model</b><span class="vf-tag vf-tag--frozen">molecule only</span>
-                <em>“smells pleasant”</em>
-              </figcaption>
-            </figure>
+          <!-- The State Ledger (Raw Internal Variables) -->
+          <div class="telemetry-section grid-2-col">
+            <div class="data-block">
+              <div class="label">METABOLIC POTENTIAL (E)</div>
+              <div id="val-energy" class="value gold-glow">100.00%</div>
+            </div>
+            <div class="data-block">
+              <div class="label">ENVIRONMENTAL SATURATION (S)</div>
+              <div id="val-saturation" class="value void-subdued">0.00%</div>
+            </div>
           </div>
 
-          <div class="vf-control">
-            <label class="vf-label" for="vf-slider">Inner state of the body</label>
-            <input type="range" id="vf-slider" min="0" max="100" value="6" step="1"
-                   aria-describedby="vf-caption" >
-            <div class="vf-ends" aria-hidden="true"><span>starving</span><span>overfull</span></div>
+          <!-- The Output (Grounded Valence) -->
+          <div class="telemetry-section computed-output">
+            <div class="label">GROUNDED VALENCE VECTOR (V)</div>
+            <div class="equation-display">V = (N × E) - (T × S)</div>
+            <div id="val-valence" class="value output-glow">INIT...</div>
           </div>
-
-          <p class="vf-caption" id="vf-caption" aria-live="polite" role="status">—</p>
         </div>
       </article>
 
