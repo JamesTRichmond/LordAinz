@@ -5,97 +5,111 @@
 # LordAi.nz
 
 A slick, self-contained static landing page for **Lord Ainz** — the Sorcerer-King
-familiar. One file (`index.html`), no build step, no dependencies, no tracking.
-Regal void-and-gold theme, the 🤘, links to the sibling research repos
-(Petrichor, Nobody) staged but private.
+familiar. One file (`index.html`), no app runtime, no package install, no tracking.
+Regal void-and-gold theme, the 🤘, and two browser-native interactive demos:
+Valence Flip and The Flatlander.
 
-> **Status: STAGED, NOT DEPLOYED.** This repo is private. DNS is not wired and
-> nothing is published. Going live needs James's registrar credentials and his
-> explicit go-ahead. The instructions below are the recipe for *when* he says so.
+> **Status: launch hardening.** The repository is public and contains a `CNAME`
+> for `lordai.nz`. Final publication still depends on GitHub Pages settings,
+> DNS, HTTPS, and social-preview verification at release time.
 
 ---
 
 ## Preview locally
 
 ```bash
-open index.html          # macOS — opens in default browser
+open index.html
 # or serve it:
 python3 -m http.server 8080   # then visit http://localhost:8080
 ```
 
-It's a single HTML file with inline CSS. Edit copy/colors directly in `index.html`
-(CSS custom properties live in `:root` at the top — `--gold`, `--void`, `--ember`).
+The site is plain static HTML/CSS/JS. Edit copy in `index.html`, visual tokens in
+`styles.css`, the hero canvas in `throne.js`, and the demos in `reliquary.js`.
 
 ---
 
-## When James says go: deploy on GitHub Pages
+## Deploy on GitHub Pages
 
-**1. Make the repo public OR keep Pages on a Pro/Org plan**
-GitHub Pages serves from public repos on any plan; private-repo Pages needs
-GitHub Pro/Team/Enterprise. (This repo is currently private by design.)
+**1. Confirm Pages availability**
+GitHub Pages is available for public repositories on GitHub Free. Private-repo
+Pages requires GitHub Pro, Team, Enterprise Cloud, or Enterprise Server.
 
 **2. Enable Pages**
-- Repo → **Settings → Pages**
-- **Source:** Deploy from a branch → `main` / `/ (root)`
-- Save. GitHub builds and serves at `https://<owner>.github.io/lordai-nz/`.
+- Repo -> **Settings** -> **Pages**.
+- **Source:** Deploy from a branch.
+- **Branch:** `main` / `/ (root)`.
+- Save. The default project-site URL is `https://jamestrichmond.github.io/LordAinz/`.
 
-**3. Add the custom domain `lordai.nz`**
-- Settings → Pages → **Custom domain** → enter `lordai.nz` → Save.
-- This writes a `CNAME` file to the repo. Leave it.
-- Tick **Enforce HTTPS** once the certificate provisions (can take ~15 min–24h).
+**3. Confirm the custom domain**
+- Settings -> Pages -> **Custom domain** -> `lordai.nz`.
+- Keep the root `CNAME` file with exactly `lordai.nz`.
+- Enable **Enforce HTTPS** once GitHub finishes certificate provisioning.
 
-**4. Wire DNS at the registrar (where James bought lordai.nz)**
+**4. Wire DNS at the registrar**
 
-For an **apex** domain (`lordai.nz`), add the four GitHub Pages A records:
+For the apex domain (`lordai.nz`), add the four GitHub Pages A records:
 
-```
+```dns
 A    @    185.199.108.153
 A    @    185.199.109.153
 A    @    185.199.110.153
 A    @    185.199.111.153
 ```
 
-(Optional AAAA / IPv6, same hosts):
-```
+Optional IPv6 records:
+
+```dns
 AAAA @ 2606:50c0:8000::153
 AAAA @ 2606:50c0:8001::153
 AAAA @ 2606:50c0:8002::153
 AAAA @ 2606:50c0:8003::153
 ```
 
-For the `www` subdomain, add a CNAME:
-```
-CNAME  www  <owner>.github.io.
+For `www.lordai.nz`, add a CNAME that points directly to the GitHub Pages user
+domain, without the repository name:
+
+```dns
+CNAME  www  JamesTRichmond.github.io.
 ```
 
-> ⚠️ Verify the current GitHub Pages apex IPs at deploy time —
-> see *docs.github.com → Pages → Managing a custom domain*. Vendors rotate them.
+Do not use wildcard DNS records for this site.
 
-**5. Verify**
+**5. Verify release**
+
 ```bash
-dig +short lordai.nz            # should return the four A records
-curl -I https://lordai.nz       # 200 OK, served by GitHub.com
+dig +short lordai.nz A
+curl -I https://lordai.nz
+curl -I https://www.lordai.nz
+curl -I https://lordai.nz/og.png
 ```
 
-DNS propagation: minutes to ~24h. Don't panic before then.
+Release is complete when:
+- `https://lordai.nz/` returns `200` over HTTPS.
+- `https://www.lordai.nz/` redirects or resolves as intended.
+- `https://lordai.nz/og.png`, `/site.webmanifest`, `/robots.txt`, and `/sitemap.xml` load.
+- GitHub Pages shows the custom domain as verified and HTTPS-enforced.
+- Social cards render the expected title, description, and `og.png` preview.
+- Mobile and reduced-motion browser checks are clean.
 
----
-
-## Alternative: Cloudflare Pages / Netlify (faster TLS, free)
-
-Either will take this repo and a custom domain in a few clicks; both provision
-HTTPS automatically and proxy DNS. If James wants Cloudflare's proxy + analytics,
-that's the smoother path — say the word and I'll stage that variant.
+DNS propagation can take up to 24 hours.
 
 ---
 
 ## Files
 
-```
-index.html    the whole site (HTML + inline CSS, zero deps)
-README.md     this file
+```text
+index.html          main page markup and metadata
+styles.css          site design system and responsive layout
+throne.js           decorative hero canvas
+reliquary.js        Valence Flip and Flatlander demos
+404.html            custom GitHub Pages 404 page
+CNAME               custom domain declaration
+robots.txt          crawler policy
+sitemap.xml         canonical sitemap
+site.webmanifest    install metadata and icons
+*.png / *.svg       social preview, icons, and favicon
 ```
 
 ---
 
-🤘 *Nazarick endures. Staged, awaiting the King's command to descend.*
+🤘 *Nazarick endures.*
