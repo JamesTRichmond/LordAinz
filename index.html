@@ -190,10 +190,10 @@
         <p class="demo__eyebrow">Relic I · computed olfaction</p>
         <h3 class="demo__title" id="valence-h">Valence Flip</h3>
         <p class="demo__lede measure">The vision layer sees the same pastry, the same warm
-          stone counter, the same dry air — one fixed material composition. Yet drag the
-          body's inner state or the ambient heat, and the <b>same</b> inferred smell swings
-          from craving to revulsion. Beside it, a model that reads only the molecule stays
-          frozen: it can name the smell, but it cannot feel what the smell is <em>for</em>.</p>
+          stone counter, the same dry air — one fixed material composition. Ambient heat only
+          changes how it smells and how loud; it is the <em>body's</em> inner state that swings
+          the verdict from craving to revulsion. Beside it, a model that reads only the molecule
+          stays frozen: it can name the smell, but it cannot feel what the smell is <em>for</em>.</p>
 
         <div class="demo__stage">
           <div class="vf-scent" aria-hidden="true">
@@ -249,7 +249,7 @@
               <label class="vf-label" for="vf-heat">Ambient heat</label>
               <!-- value=40 maps to 24 °C via: 8 + (40/100)*40 = 24 -->
               <input type="range" id="vf-heat" min="0" max="100" value="40" step="1"
-                     aria-describedby="vf-caption" >
+                     aria-describedby="vf-caption" aria-valuetext="24 °C" >
               <div class="vf-ends" aria-hidden="true"><span>cool 8 °C</span><span>hot 48 °C</span></div>
             </div>
           </div>
