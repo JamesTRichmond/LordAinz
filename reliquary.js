@@ -76,6 +76,13 @@
     // Temperature range for the heat slider: slider 0..100 maps to MIN_TEMP_C..(MIN_TEMP_C+TEMP_RANGE_C).
     var MIN_TEMP_C = 8;
     var TEMP_RANGE_C = 40;
+    // Default heat slider value (maps to 24°C: MIN_TEMP_C + (DEFAULT_HEAT_VALUE/100)*TEMP_RANGE_C).
+    var DEFAULT_HEAT_VALUE = 40;
+
+    // Temperature thresholds (°C) for smell note transitions in envFor().
+    var TEMP_HOT_THRESHOLD_C = 36;
+    var TEMP_WARM_THRESHOLD_C = 28;
+    var TEMP_MILD_THRESHOLD_C = 18;
 
     // Convert slider value 0..100 to Celsius (MIN_TEMP_C .. MIN_TEMP_C+TEMP_RANGE_C).
     function heatC(v) {
@@ -99,10 +106,10 @@
       var c = heatC(heat * 100);
       var ctx = "heat " + c + " °C · humidity " + ENV_HUMIDITY + " · " + ENV_WIND;
       var note;
-      if (c >= 36)      note = "hot oil, toasted crust, dry dust";
-      else if (c >= 28) note = "buttered bread, warm stone";
-      else if (c >= 18) note = "buttered bread, faint dust";
-      else              note = "cool dough, mineral stone, little scent";
+      if (c >= TEMP_HOT_THRESHOLD_C)       note = "hot oil, toasted crust, dry dust";
+      else if (c >= TEMP_WARM_THRESHOLD_C) note = "buttered bread, warm stone";
+      else if (c >= TEMP_MILD_THRESHOLD_C) note = "buttered bread, faint dust";
+      else                                  note = "cool dough, mineral stone, little scent";
       return { text: ctx, note: note };
     }
 
@@ -227,7 +234,7 @@
     var boxG, boxB;
     function render() {
       var s = (+slider.value || 0) / 100;
-      var heat = (+heatSlider.value || 40) / 100;
+      var heat = (+heatSlider.value || DEFAULT_HEAT_VALUE) / 100;
       var v = valenceFor(s, heat);
       var env = envFor(heat);
       drawGauge(ctxG, boxG, v, true);
