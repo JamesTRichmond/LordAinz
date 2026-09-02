@@ -309,6 +309,25 @@
       return seed / 0x7fffffff;
     }
 
+    // Accessible names for the scene canvases. Static while projection-only;
+    // after reveal, announce which scene holds the gold orb nearest / far back.
+    function setCanvasLabels(revealed, answer) {
+      if (!revealed) {
+        cvA.setAttribute("aria-label", "Scene A — three orbs");
+        cvB.setAttribute("aria-label", "Scene B — three orbs");
+        return;
+      }
+      var near = "gold orb nearest";
+      var far = "gold orb far back";
+      if (answer === "A") {
+        cvA.setAttribute("aria-label", "Scene A — " + near);
+        cvB.setAttribute("aria-label", "Scene B — " + far);
+      } else {
+        cvA.setAttribute("aria-label", "Scene A — " + far);
+        cvB.setAttribute("aria-label", "Scene B — " + near);
+      }
+    }
+
     function newRound() {
       // which scene actually holds the gold orb nearest?
       var answer = rnd() < 0.5 ? "A" : "B";
@@ -342,6 +361,7 @@
         prompt.innerHTML =
           "Which scene holds the gold orb <b>nearest</b> you?";
       }
+      setCanvasLabels(false);
       draw();
     }
 
@@ -512,6 +532,7 @@
       scoreRound();
       var ans = state.answer;
       (ans === "A" ? cvA : cvB).parentNode.classList.add("is-answer");
+      setCanvasLabels(true, ans);
       if (prompt) {
         prompt.classList.add("is-right");
         var youBit = state.you
