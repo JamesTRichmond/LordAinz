@@ -25,6 +25,14 @@ INTERACTIVE_BEHAVIORS = (
         "reveal button pressed-state update",
         r"""btnReveal\.setAttribute\(\s*["']aria-pressed["']\s*,\s*["']true["']\s*\)""",
     ),
+    (
+        "Flatlander live canvas labels after reveal",
+        r"""setCanvasLabels\s*\(\s*true\s*,""",
+    ),
+    (
+        "Flatlander canvas labels reset on new round",
+        r"""setCanvasLabels\s*\(\s*false""",
+    ),
 )
 
 
