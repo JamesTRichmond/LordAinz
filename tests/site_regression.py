@@ -25,6 +25,14 @@ INTERACTIVE_BEHAVIORS = (
         "reveal button pressed-state update",
         r"""btnReveal\.setAttribute\(\s*["']aria-pressed["']\s*,\s*["']true["']\s*\)""",
     ),
+    (
+        "body-state slider live valuetext",
+        r"""slider\.setAttribute\(\s*["']aria-valuetext["']\s*,\s*bodyStateFor\(s\)\s*\)""",
+    ),
+    (
+        "grounded gauge live accessible name",
+        r"""gG\.setAttribute\(\s*["']aria-label["']""",
+    ),
 )
 
 
