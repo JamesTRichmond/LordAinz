@@ -1,0 +1,39 @@
+/* Cold iron — a forged frame over the existing Nazarick system. */
+.hero {
+  position: relative;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  pointer-events: none;
+  border: 1px solid rgba(186, 176, 162, 0.28);
+  box-shadow:
+    inset 0 0 0 1px rgba(6, 4, 9, 0.55),
+    0 0 0 10px rgba(6, 4, 9, 0.22);
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 10px 10px, #c8b89a 1.4px, transparent 1.6px),
+    radial-gradient(circle at calc(100% - 10px) 10px, #c8b89a 1.4px, transparent 1.6px),
+    radial-gradient(circle at 10px calc(100% - 10px), #c8b89a 1.4px, transparent 1.6px),
+    radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), #c8b89a 1.4px, transparent 1.6px);
+  opacity: 0.55;
+  z-index: 2;
+}
+.pillar, .demo, .codex-card {
+  box-shadow:
+    var(--e-1),
+    inset 0 1px 0 rgba(200, 184, 154, 0.08);
+  border-color: rgba(186, 176, 162, 0.22);
+}
+.nav {
+  border-bottom-color: rgba(186, 176, 162, 0.22);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero::after, .hero::before { transition: none; }
+}
