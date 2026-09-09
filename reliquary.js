@@ -188,7 +188,7 @@
       ctx.fillStyle = live
         ? "rgba(" + (v >= 0 ? GOLD_HI : BLOOD) + ",1)"
         : "rgba(" + ASH + ",1)";
-      var sign = v >= 0 ? "+" : "−";
+      var sign = v >= 0 ? "+" : "\u2212";
       ctx.fillText(sign + Math.abs(v).toFixed(2), cx, cy - r * 0.42);
     }
 
@@ -198,6 +198,14 @@
       if (v > -0.15) return "indifferent";
       if (v > -0.55) return "put off";
       return "revolted";
+    }
+
+    function bodyStateFor(s) {
+      if (s <= 0.12) return "starving";
+      if (s <= 0.38) return "hungry";
+      if (s <= 0.62) return "comfortable";
+      if (s <= 0.88) return "full";
+      return "overfull";
     }
 
     function captionFor(heat, v) {
@@ -241,11 +249,16 @@
       var env = envFor(heat);
       drawGauge(ctxG, boxG, v, true);
       drawGauge(ctxB, boxB, BLIND_VALENCE, false);
-      if (groundedWord) groundedWord.textContent = "“" + wordFor(v) + "”";
+      if (groundedWord) groundedWord.textContent = "\u201c" + wordFor(v) + "\u201d";
       if (visionEl) visionEl.textContent = COMPOSITION;
       if (envEl) envEl.textContent = env.text;
       if (smellEl) smellEl.textContent = env.note;
-      heatSlider.setAttribute("aria-valuetext", heatC(heat * 100) + " °C");
+      heatSlider.setAttribute("aria-valuetext", heatC(heat * 100) + " \u00b0C");
+      slider.setAttribute("aria-valuetext", bodyStateFor(s));
+      gG.setAttribute(
+        "aria-label",
+        "Grounded valence gauge — " + wordFor(v) + ", " + v.toFixed(2)
+      );
       caption.innerHTML = captionFor(heat, v);
     }
 

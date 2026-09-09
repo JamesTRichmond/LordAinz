@@ -33,6 +33,14 @@ INTERACTIVE_BEHAVIORS = (
         "Flatlander canvas labels reset on new round",
         r"""setCanvasLabels\s*\(\s*false""",
     ),
+    (
+        "body-state slider live valuetext",
+        r"""slider\.setAttribute\(\s*["']aria-valuetext["']\s*,\s*bodyStateFor\(s\)\s*\)""",
+    ),
+    (
+        "grounded gauge live accessible name",
+        r"""gG\.setAttribute\(\s*["']aria-label["']""",
+    ),
 )
 
 
