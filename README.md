@@ -5,9 +5,13 @@
 # LordAi.nz
 
 A slick, self-contained static landing page for **Lord Ainz** — the Sorcerer-King
-familiar. One file (`index.html`), no app runtime, no package install, no tracking.
-Regal void-and-gold theme, the 🤘, and two browser-native interactive demos:
-Valence Flip and The Flatlander.
+familiar. No app runtime, no package install, no tracking. Regal void-and-gold
+theme, the 🤘, and two browser-native interactive demos: Valence Flip and The
+Flatlander.
+
+The page is split across static files (`index.html`, `styles.css`, `cold-iron.css`,
+`throne.js`, `reliquary.js`) so the markup, tokens, hero canvas, and demos can be
+edited independently. There is still no build step.
 
 > **Status: launch hardening.** The repository is public and contains a `CNAME`
 > for `lordai.nz`. Final publication still depends on GitHub Pages settings,
@@ -24,7 +28,8 @@ python3 -m http.server 8080   # then visit http://localhost:8080
 ```
 
 The site is plain static HTML/CSS/JS. Edit copy in `index.html`, visual tokens in
-`styles.css`, the hero canvas in `throne.js`, and the demos in `reliquary.js`.
+`styles.css`, the throne frame in `cold-iron.css`, the hero canvas in `throne.js`,
+and the demos in `reliquary.js`.
 
 ---
 
@@ -100,6 +105,7 @@ DNS propagation can take up to 24 hours.
 ```text
 index.html          main page markup and metadata
 styles.css          site design system and responsive layout
+cold-iron.css       throne / hero frame overlay
 throne.js           decorative hero canvas
 reliquary.js        Valence Flip and Flatlander demos
 404.html            custom GitHub Pages 404 page
@@ -107,6 +113,7 @@ CNAME               custom domain declaration
 robots.txt          crawler policy
 sitemap.xml         canonical sitemap
 site.webmanifest    install metadata and icons
+tests/              static regression checks for the demos
 *.png / *.svg       social preview, icons, and favicon
 ```
 
