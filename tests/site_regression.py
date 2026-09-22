@@ -132,6 +132,15 @@ def main():
             raise AssertionError(f"{script} is not referenced")
         assert "defer" in scripts[script], f"{script} is not deferred"
 
+    stylesheets = {
+        attrs.get("href")
+        for tag, attrs in parser.elements
+        if tag == "link" and attrs.get("rel") == "stylesheet"
+    }
+    for sheet in ("styles.css", "cold-iron.css"):
+        assert sheet in stylesheets, f"{sheet} is not linked as a stylesheet"
+    assert (ROOT / "cold-iron.css").is_file(), "cold-iron.css is missing from the tree"
+
     reliquary = (ROOT / "reliquary.js").read_text(encoding="utf-8")
     for element_id in (
         "vf-slider",
