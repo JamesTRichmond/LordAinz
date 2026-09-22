@@ -23,6 +23,7 @@ jobs:
           required_files=(
             index.html
             styles.css
+            cold-iron.css
             throne.js
             reliquary.js
             README.md
@@ -82,6 +83,7 @@ jobs:
               "apple-touch-icon.png",
               "site.webmanifest",
               "styles.css",
+              "cold-iron.css",
               "throne.js",
               "reliquary.js",
               "humans.txt",
@@ -103,6 +105,7 @@ jobs:
           path: |
             index.html
             styles.css
+            cold-iron.css
             throne.js
             reliquary.js
             README.md
